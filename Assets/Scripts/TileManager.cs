@@ -12,15 +12,16 @@ public class TileManager : MonoBehaviour
     GameObject tileParent;
 
     [SerializeField]
-    Tile grassTile, pathTile;
+    Tile grassTile;
 
     [SerializeField]
     int width,height,tileScale;
    
     Tile[,] tileMap;
 
-    Tile startTile, endTile;
-    List<Tile> path;
+    public Tile startTile, endTile;
+
+    public List<Transform> path= new List<Transform>();
     private void Awake()
     {
         if (instance!=null&& instance!=this) 
@@ -28,16 +29,17 @@ public class TileManager : MonoBehaviour
         Destroy(this);
         }
         instance = this;
-    }
-    void Start()
-    {
-        tileMap = new Tile[width, height];
 
+        tileMap = new Tile[width, height];
         CreateMap();
         startTile = GetStartTile();
         endTile = GetEndTile();
-        path=FindPath();
+    }
+    void Start()
+    {
+        FindPath();
         StartCoroutine(ShowPathEffect());
+        Debug.Log("tilemanager"+path.Count);
     }
 
     void Update()
@@ -69,11 +71,10 @@ public class TileManager : MonoBehaviour
 
     }
 
-    List<Tile> FindPath()
+    void FindPath()
     {
         List<Tile> openList= new List<Tile>();
         HashSet<Tile> closedList = new HashSet<Tile>();
-        List<Tile> path = new List<Tile>();
 
         openList.Add(startTile);
         
@@ -128,17 +129,15 @@ public class TileManager : MonoBehaviour
         current = endTile;
         while (current!=null)
         {
-            path.Add(current);
+            path.Add(current.transform);
             //Destroy(current.transform.GetChild(2).gameObject);
             current = current.parent;
         }
          path.Reverse();
-        return path;
-
-
-
+        
 
     }
+    
     HashSet<Tile> getNeighbors(Tile tile)
     {
         HashSet<Tile> set = new HashSet<Tile>();
@@ -172,7 +171,7 @@ public class TileManager : MonoBehaviour
 
         foreach (var tile in path) 
         {
-            GameObject top = tile.transform.GetChild(2).gameObject;
+            GameObject top = tile.transform.GetChild(0).gameObject;
             Sequence seq = DOTween.Sequence();
             seq.Append(top.transform.DOScale(1.15f, 0.1f).SetEase(Ease.OutBack))
                .Join(top.GetComponent<Renderer>().material.DOColor(Color.red, 0.1f))
@@ -181,6 +180,8 @@ public class TileManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.2f);
         }
+        GameManager.instance.isGameStart = true;
+        
     }
 
 }
