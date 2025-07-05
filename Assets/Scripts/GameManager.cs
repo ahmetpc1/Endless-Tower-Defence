@@ -53,6 +53,8 @@ public class GameManager : MonoBehaviour
     public Image UpgradeTimerParent;
     public RectTransform canvas;
     public GameObject GameOverMenu;
+    public GameObject InfoMenu;
+
     Vector2 originalPos;
 
 

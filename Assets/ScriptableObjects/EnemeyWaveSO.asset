@@ -16,8 +16,8 @@ MonoBehaviour:
   mummyData: {fileID: 11400000, guid: a18e06e46aa5f2e4bb683cb2c3ed5103, type: 2}
   mummyCount: 3
   bearCount: 3
-  bearSpawnSpeed: 1
-  mummySpawnSpeed: 1
-  spawnIntervalTime: 1
+  bearSpawnSpeed: 4
+  mummySpawnSpeed: 4
+  spawnIntervalTime: 2
   bearIncrementRate: 1.2
   mummyIncrementRate: 1
