@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     public Image UpgradeTimerParent;
     public RectTransform canvas;
     public GameObject GameOverMenu;
-
+    Vector2 originalPos;
 
 
     [Space(10)]
@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
         ChangeGoldCount(initialGoldCount);
         GameOverMenu.SetActive(false);
 
+        originalPos= kingFace.rectTransform.anchoredPosition;
     }
     #region Towers
 
@@ -168,15 +169,24 @@ public class GameManager : MonoBehaviour
     }
     void GameOver() 
     {
+        GameOverMenu.transform.DOScale(0f,0f);
         Time.timeScale = 0f;
-        isGameStart = false;
-        ChangeAllButtonsAlpha(false);
         GameOverMenu.SetActive(true);
+        ChangeAllButtonsAlpha(false);
+        isGameStart = false;
+        GameOverMenu.transform.DOScale(1f, 4f).SetUpdate(true);
+
+
+
+
+
+
     }
 
     #region buttons
     public void RestartButton()
     {
+        Time.timeScale=1f;
         SceneManager.LoadScene(0);
     }
     public void ExitButton()
@@ -219,14 +229,14 @@ public class GameManager : MonoBehaviour
     public void RefreshHealthUI()
     {
         healthText.text = $"{currentPlayerHealth} / {maxPlayerHealth}";
-        if (currentPlayerHealth < 0)
+        if (currentPlayerHealth <= 0)
         {
             kingFace.sprite = kingDeadFace;
+            kingFace.rectTransform.DOAnchorPos(originalPos, 1.25f).SetUpdate(true);
             return;
         }
-        
-        DG.Tweening.Sequence kingFaceSeq = DOTween.Sequence();
-        Vector2 originalPos = kingFace.rectTransform.anchoredPosition;
+
+        DG.Tweening.Sequence kingFaceSeq = DOTween.Sequence().SetUpdate(true);
         Vector2 goingPos = originalPos;
         Vector2 startPos = originalPos;
         goingPos.x -= 200;
