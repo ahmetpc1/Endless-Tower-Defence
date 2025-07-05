@@ -15,6 +15,7 @@ public class EnemyDataSO : ScriptableObject
      
      public int damage;
      public int maxHealth;
+    public int goldReward;
      
 
 

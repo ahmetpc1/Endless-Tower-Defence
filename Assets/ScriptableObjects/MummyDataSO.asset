@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: MummyDataSO
   m_EditorClassIdentifier: 
   enemyObject: {fileID: 3647265814079931686, guid: e74af6436c4165b46bff123499212731, type: 3}
-  speed: 3
+  speed: 4
   turnSpeed: 3
   damage: 2
   maxHealth: 10
+  goldReward: 5

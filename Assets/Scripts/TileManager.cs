@@ -16,7 +16,10 @@ public class TileManager : MonoBehaviour
 
     [SerializeField]
     int width,height,tileScale;
-   
+
+    [SerializeField]
+    GameObject gateObject;
+
     Tile[,] tileMap;
 
     public Tile startTile, endTile;
@@ -39,7 +42,6 @@ public class TileManager : MonoBehaviour
     {
         FindPath();
         StartCoroutine(ShowPathEffect());
-        Debug.Log("tilemanager"+path.Count);
     }
 
     void Update()
@@ -63,11 +65,13 @@ public class TileManager : MonoBehaviour
     Tile GetStartTile() 
     {
     return tileMap[UnityEngine.Random.Range(0, width),0];
-    
+    //return tileMap[1, 0];
+
     }
     Tile GetEndTile()
     {
         return tileMap[UnityEngine.Random.Range(0, width),height-1];
+        //return tileMap[5, height - 1];
 
     }
 
@@ -180,8 +184,15 @@ public class TileManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.2f);
         }
+        Vector3 gatePos = endTile.transform.position;
+        gatePos.y = 1f;
+        gatePos.z = gatePos.z + 2*tileScale;
+        GameObject gate = Instantiate(gateObject, gatePos, Quaternion.identity,transform);
+        Sequence gateSeq = DOTween.Sequence();
+        gateSeq.Append(gate.transform.DOScale(1.30f, 0.2f).SetEase(Ease.OutBack))
+               .Append(gate.transform.DOScale(1f, 0.1f).SetEase(Ease.InBack));
         GameManager.instance.isGameStart = true;
-        
+        GameManager.instance.ChangeAllButtonsAlpha(true);
     }
 
 }

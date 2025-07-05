@@ -5,6 +5,7 @@ using DG.Tweening.Plugins.Core.PathCore;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using System;
 
 public class Enemy : MonoBehaviour
 {
@@ -16,15 +17,19 @@ public class Enemy : MonoBehaviour
 
     int currentHealth;
 
+    public Action<EnemyDataSO> onEnemyEnterGate;
+    
+
     void OnEnable() 
     {
         path=TileManager.instance.path;
-        
     }
     void Start() 
     {
      currentHealth = enemyDataSO.maxHealth;
+     onEnemyEnterGate += GameManager.instance.DecreasePlayerHealth;
      StartCoroutine(StartWalk());
+     
     }
     IEnumerator StartWalk()
     {
@@ -45,6 +50,27 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
     }
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Gate")
+        {
+            onEnemyEnterGate.Invoke(enemyDataSO);
+            GameManager.instance.RefreshHealthUI();
+            Destroy(gameObject);//object pool olana kadar dursun
+        }
+
+        
+    }
+
+    public void DecreaseHealth(int damage) 
+    {
+        currentHealth -= damage;
+        if (currentHealth<=0&&gameObject!=null)
+        {
+            Destroy(gameObject);
+            GameManager.instance.ChangeGoldCount(enemyDataSO.goldReward);
+        }
+    }
+
 
 }

@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bearData: {fileID: 11400000, guid: a0a8c789c6c977a45837c4faa68d8a39, type: 2}
   mummyData: {fileID: 11400000, guid: a18e06e46aa5f2e4bb683cb2c3ed5103, type: 2}
-  mummyCount: 7
-  bearCount: 5
+  mummyCount: 3
+  bearCount: 3
   bearSpawnSpeed: 1
-  mummySpawnSpeed: 2
+  mummySpawnSpeed: 1
   spawnIntervalTime: 1
   bearIncrementRate: 1.2
   mummyIncrementRate: 1
