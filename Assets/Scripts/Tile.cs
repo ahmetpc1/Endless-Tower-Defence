@@ -157,6 +157,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             if (passingTime >= upgradeTickTime)
             {
                 tower.UpgradeTower();
+                
+                GameManager.instance.upgradeParticale.transform.SetParent(transform);
+                GameManager.instance.upgradeParticale.transform.localPosition = Vector3.zero;
+                GameManager.instance.ShowUpgradeVfx();
+
                 isTick = false;
             }
         }

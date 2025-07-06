@@ -89,11 +89,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7623614551478469950, guid: d7edf4ccb60c81e41858376d7deb44bc, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7623614551478469950, guid: d7edf4ccb60c81e41858376d7deb44bc, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7623614551478469950, guid: d7edf4ccb60c81e41858376d7deb44bc, type: 3}
       propertyPath: m_LocalRotation.z
@@ -101,7 +101,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7623614551478469950, guid: d7edf4ccb60c81e41858376d7deb44bc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2985763042325143543, guid: d7edf4ccb60c81e41858376d7deb44bc, type: 3}
       propertyPath: m_Layer
@@ -202,7 +202,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 1459476806552807843}
   catapultBody: {fileID: 3848015375091852516}
   targetEnemy: {fileID: 0}
-  isLocked: 0
+  cooldown: 2
 --- !u!135 &7260886681579155572
 SphereCollider:
   m_ObjectHideFlags: 0

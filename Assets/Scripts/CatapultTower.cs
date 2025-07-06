@@ -11,21 +11,21 @@ public class CatapultTower : MonoBehaviour,ITower
     [SerializeField] int upgradePrice;
     [SerializeField] Transform bulletSpawnPoint;
     [SerializeField] Transform catapultBody;
-    int bulletDamage = 1;
 
-    [SerializeField] Transform targetEnemy;
-    
-    public bool isLocked = false;
+    public Transform targetEnemy=null;
+    Coroutine currentCoroutine=null;
+    [SerializeField] float cooldown;
+    float lastShootTime;
 
     public IEnumerator fireToEnemy(Transform enemy)
     {
-        while (enemy != null&& isLocked)
+        while (enemy != null&&Time.time>= cooldown +lastShootTime)
         {
+            lastShootTime = Time.time;
             GameObject bullet = Instantiate(bulletObject, bulletSpawnPoint.position, Quaternion.identity);
             Bullet bulletScripte = bullet.GetComponent<Bullet>();
-            bulletScripte.damage = bulletDamage;
             bulletScripte.target = enemy;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(3.5f);
         }
     }
 
@@ -34,47 +34,53 @@ public class CatapultTower : MonoBehaviour,ITower
         if (GameManager.instance.goldCount >= upgradePrice)
         {
             GameManager.instance.ChangeGoldCount(-upgradePrice);
-            bulletDamage++;
+            BulletAreaDamage.areaDamage++;
         }
         else
         {
             Debug.Log("OLMADI");
         }
     }
-    Vector3 gizmoVecDirTest;
+    
     private void Update()
     {
-        if (isLocked&& targetEnemy != null) 
-        {
-        Vector3 dir= targetEnemy.transform.position-catapultBody.position;
-            //dir.y = catapultBody.position.y;
-            gizmoVecDirTest = dir;
-        catapultBody.LookAt(dir);
+        if (targetEnemy!=null) { 
+       Vector3 dir = (targetEnemy.position-catapultBody.position).normalized;
+       dir.y=0;
+       Quaternion lookRot = Quaternion.LookRotation(dir);
+       catapultBody.transform.rotation = Quaternion.Slerp(catapultBody.transform.rotation, lookRot, 10f * Time.fixedDeltaTime);
         }
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(catapultBody.position, gizmoVecDirTest);
-    }
+    
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy" && !isLocked && targetEnemy == null)
+        if (other.gameObject.tag == "Enemy" &&  targetEnemy == null)
         {
             targetEnemy = other.transform;
-            StartCoroutine(fireToEnemy(other.transform));
-            isLocked = true;
+            currentCoroutine= StartCoroutine(fireToEnemy(other.transform));
+            
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy" && targetEnemy == null)
+        {
+            targetEnemy = other.transform;
+            currentCoroutine = StartCoroutine(fireToEnemy(other.transform));
+
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Enemy" && isLocked && other.transform == targetEnemy)
+        if (other.gameObject.tag == "Enemy" && other.transform == targetEnemy)
         {
             targetEnemy = null;
-            isLocked = false;
-            StopCoroutine(fireToEnemy(other.transform));
+            if (currentCoroutine!=null) 
+            {
+            StopCoroutine(currentCoroutine);
+
+            }
         }
 
     }

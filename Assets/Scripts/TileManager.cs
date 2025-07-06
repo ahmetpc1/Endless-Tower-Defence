@@ -55,7 +55,6 @@ public class TileManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                Debug.Log("1");
                 Tile tile = Instantiate(grassTile ,new Vector3(x+tileScale*x,0f,y + tileScale*y),Quaternion.identity,tileParent.transform);
                 tileMap[x, y] = tile;
                 tile.gameObject.name = $"{tile.transform.position.x/tileScale},{tile.transform.position.z / tileScale}";
@@ -78,7 +77,6 @@ public class TileManager : MonoBehaviour
 
     void FindPath()
     {
-        Debug.Log("2");
 
         List<Tile> openList= new List<Tile>();
         HashSet<Tile> closedList = new HashSet<Tile>();
@@ -173,7 +171,6 @@ public class TileManager : MonoBehaviour
 
     IEnumerator ShowPathEffect() 
     {
-        Debug.Log("3");
 
         yield return new WaitForSeconds(0.1f);
 

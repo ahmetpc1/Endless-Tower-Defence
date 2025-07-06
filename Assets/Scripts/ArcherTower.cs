@@ -9,8 +9,9 @@ public class ArcherTower : MonoBehaviour, ITower
     [SerializeField] int upgradePrice;
     Transform arrowSpawnPoint;
     Transform targetEnemy;
-    int arrowDamage = 1;
-    bool isLocked = false;
+    [SerializeField]int arrowDamage = 1;
+
+    Coroutine currentCoroutine=null;
     void Start()
     {
         arrowSpawnPoint = transform.GetChild(0);
@@ -34,19 +35,30 @@ public class ArcherTower : MonoBehaviour, ITower
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy" && !isLocked && targetEnemy == null)
+        if (other.gameObject.tag == "Enemy" && targetEnemy == null)
         {
             targetEnemy = other.transform;
-            StartCoroutine(fireToEnemy(other.transform));
+            currentCoroutine = StartCoroutine(fireToEnemy(other.transform));
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy" && targetEnemy == null)
+        {
+            targetEnemy = other.transform;
+            currentCoroutine = StartCoroutine(fireToEnemy(other.transform));
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Enemy" && isLocked && other.transform == targetEnemy)
+        if (other.gameObject.tag == "Enemy"&& targetEnemy == other.transform  )
         {
             targetEnemy = null;
-            isLocked = false;
-            StopCoroutine(fireToEnemy(other.transform));
+            if (currentCoroutine != null)
+            {
+                StopCoroutine(currentCoroutine);
+
+            }
         }
 
     }

@@ -27,18 +27,12 @@ public class Arrow : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position,target.position,Time.fixedDeltaTime* speed);
+            Vector3 direction = (target.position - transform.position).normalized;
 
-            Vector3 enemyPos = target.position - transform.position;
-            float angle = Vector3.SignedAngle(transform.position, enemyPos, transform.forward);
-            transform.Rotate(-90f, 0f, angle);
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, 10f * Time.fixedDeltaTime);
 
-
-            //Vector3 direction = target.position - transform.position;
-            //var rot = Quaternion.LookRotation(direction);
-            //rb.MoveRotation(rot);
-            //rb.velocity = direction * Time.fixedDeltaTime * arrowSpeed;
-            //transform.rotation = Quaternion.LookRotation(direction);
+            transform.position += transform.forward * speed * Time.fixedDeltaTime;
         }
     }
 

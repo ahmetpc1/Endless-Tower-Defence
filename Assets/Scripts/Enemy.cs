@@ -61,14 +61,16 @@ public class Enemy : MonoBehaviour
 
         
     }
-
     public void DecreaseHealth(int damage) 
     {
         currentHealth -= damage;
         if (currentHealth<=0&&gameObject!=null)
         {
-            Destroy(gameObject);
             GameManager.instance.ChangeGoldCount(enemyDataSO.goldReward);
+            GameManager.instance.ShowDeathVfx(transform);
+            GameManager.instance.score += damage;
+            
+            Destroy(gameObject);
         }
     }
 

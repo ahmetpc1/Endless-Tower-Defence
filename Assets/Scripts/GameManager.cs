@@ -25,16 +25,19 @@ public class GameManager : MonoBehaviour
     public GameObject TowerRangeCircle;
     public float archerTowerRange, catapultTowerRange;
     public float upgradeTickTime;
+    public ParticleSystem upgradeParticale;
+
+
     [Space(10)]
     [Header(" ENEMY")]
     [SerializeField]
     public Transform enemyPool;
     public Vector3 enemySpawnPoint;
     public Vector3 endPoint;
-    int enemyCount = 5;
     public GameObject enemyObject;
     [SerializeField]
     EnemeyWaveSO enemeyWaveSO;
+    public ParticleSystem EnemyDeathVfx;
 
     [Space(10)]
     [Header(" HEALTH")]
@@ -42,7 +45,7 @@ public class GameManager : MonoBehaviour
     int maxPlayerHealth;
     int currentPlayerHealth;
     [SerializeField] TextMeshProUGUI healthText;
-
+   
     [Space(10)]
     [Header("UI COMPONENTS")]
     [SerializeField] Sprite[] kingFaces;
@@ -53,10 +56,9 @@ public class GameManager : MonoBehaviour
     public Image UpgradeTimerParent;
     public RectTransform canvas;
     public GameObject GameOverMenu;
-    public GameObject InfoMenu;
-
+    [SerializeField] TextMeshProUGUI scoreText;
     Vector2 originalPos;
-
+    int currentFaceID=3;
 
     [Space(10)]
     [Header("GOLD")]
@@ -64,13 +66,15 @@ public class GameManager : MonoBehaviour
     public int goldCount;
     [SerializeField] int initialGoldCount;
 
+    public int score=0;
 
-
+    public ObjectPool enemyDeathVfxPool;
+    public ObjectPool AoEVfxPool;
 
 
     void Start()
     {
-
+        
         if (instance!=null&&instance!=this)
         {
         Destroy(this);
@@ -90,8 +94,12 @@ public class GameManager : MonoBehaviour
         ChangeAllButtonsAlpha(false);
         ChangeGoldCount(initialGoldCount);
         GameOverMenu.SetActive(false);
+     
+        originalPos = kingFace.rectTransform.anchoredPosition;
 
-        originalPos= kingFace.rectTransform.anchoredPosition;
+        CloseUpgradeVfx();
+        enemyDeathVfxPool.prefab = EnemyDeathVfx.gameObject;
+        healthText.text = $"{currentPlayerHealth} / {maxPlayerHealth}";
     }
     #region Towers
 
@@ -176,25 +184,21 @@ public class GameManager : MonoBehaviour
         GameOverMenu.SetActive(true);
         ChangeAllButtonsAlpha(false);
         isGameStart = false;
+        scoreText.text ="Score: " +score.ToString();
         GameOverMenu.transform.DOScale(1f, 4f).SetUpdate(true);
-
-
-
-
-
-
     }
 
     #region buttons
     public void RestartButton()
     {
         Time.timeScale=1f;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
     public void ExitButton()
     {
         Application.Quit();
     }
+   
     void changeButtonAlpha(Button btn,float alpha) 
     {
     Color color = Color.white;
@@ -227,7 +231,6 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
-
     public void RefreshHealthUI()
     {
         healthText.text = $"{currentPlayerHealth} / {maxPlayerHealth}";
@@ -237,6 +240,7 @@ public class GameManager : MonoBehaviour
             kingFace.rectTransform.DOAnchorPos(originalPos, 1.25f).SetUpdate(true);
             return;
         }
+        if (!CalculateKingFaceRate()) { return; }
 
         DG.Tweening.Sequence kingFaceSeq = DOTween.Sequence().SetUpdate(true);
         Vector2 goingPos = originalPos;
@@ -255,6 +259,35 @@ public class GameManager : MonoBehaviour
 
 
     }
+    public void ShowUpgradeVfx() 
+    {
+        upgradeParticale.Play();
+        Invoke("CloseUpgradeVfx", 2f);
+
+
+    }
+    private void CloseUpgradeVfx()
+    {
+        upgradeParticale.Stop();
+    }
+    public void ShowDeathVfx(Transform parent)
+    {
+        GameObject obj = enemyDeathVfxPool.GetObject();
+        if (obj == null) return;
+
+        obj.transform.position = parent.position;
+        
+        obj.transform.rotation = Quaternion.identity;
+    }
+    public void ShowAoEVfx(Vector3 location)
+    {
+        GameObject obj = AoEVfxPool.GetObject();
+        if (obj == null) return;
+
+        obj.transform.position = location;
+
+        obj.transform.rotation = Quaternion.identity;
+    }
 
     private void UpdateKingFace()
     {
@@ -265,9 +298,23 @@ public class GameManager : MonoBehaviour
         }
         float rate = (float)currentPlayerHealth / maxPlayerHealth;
         rate *= 4;
-        kingFace.sprite = kingFaces[Mathf.Clamp((int)rate - 1, 0, 4)];
+        int faceID = Mathf.Clamp((int)Mathf.Round(rate-1),0,3);
+        kingFace.sprite = kingFaces[faceID];
+        
     }
-
+    public bool CalculateKingFaceRate() 
+    {
+        float rate = (float)currentPlayerHealth / maxPlayerHealth;
+        rate *= 4;
+        int faceID = Mathf.Clamp((int)Mathf.Round(rate - 1), 0, 3);
+        if (currentFaceID != faceID)
+        {
+            currentFaceID = faceID;
+            return true;
+        }
+        else
+            return false;
+    }
     public void ChangeGoldCount(int amount)//negatýf veya pozýtýf degerler alabýlýr,tek fonk yazmak ýcýn bu sekýlde yaptýk
     {
         goldCount += amount;
