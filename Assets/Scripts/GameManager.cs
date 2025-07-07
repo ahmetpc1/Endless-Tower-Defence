@@ -89,7 +89,6 @@ public class GameManager : MonoBehaviour
         audioSource1.volume = 1f;
         audioSource3.volume = 1f;
 
-
         audioSource1.playOnAwake = false;
         audioSource2.playOnAwake = false;
         audioSource3.playOnAwake = false;
@@ -217,8 +216,11 @@ public class GameManager : MonoBehaviour
         enemeyWaveSO.bearCount = Mathf.Max((int)(enemeyWaveSO.bearCount * enemeyWaveSO.bearIncrementRate), enemeyWaveSO.bearCount+1);
         enemeyWaveSO.mummyCount = Mathf.Max((int)(enemeyWaveSO.mummyCount * enemeyWaveSO.mummyIncrementRate), enemeyWaveSO.mummyCount + 1);
         
-        enemeyWaveSO.bearData.maxHealth+= enemyHealthFactor*2/3;
-        enemeyWaveSO.mummyData.maxHealth+= enemyHealthFactor/3;
+        enemeyWaveSO.bearData.maxHealth+= enemyHealthFactor*2/5;
+        enemeyWaveSO.mummyData.maxHealth+= enemyHealthFactor * 1 / 4;
+        enemeyWaveSO.bearSpawnSpeed = Mathf.Clamp(enemeyWaveSO.bearSpawnSpeed-0.05f,1.2f,2f);
+        enemeyWaveSO.mummySpawnSpeed = Mathf.Clamp(enemeyWaveSO.mummySpawnSpeed - 0.05f, 1.2f, 2f);
+
 
     }
 
@@ -381,6 +383,8 @@ public class GameManager : MonoBehaviour
     enemeyWaveSO.mummyCount = initialEnemyCount;
         enemeyWaveSO.bearData.maxHealth = bearHp;
         enemeyWaveSO.mummyData.maxHealth = mummyHp;
+        enemeyWaveSO.bearSpawnSpeed = 2;
+        enemeyWaveSO.mummySpawnSpeed = 2;
 
     }
 

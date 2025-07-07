@@ -38,6 +38,7 @@ public class CatapultTower : MonoBehaviour,ITower
         if (GameManager.instance.goldCount >= upgradePrice)
         {
             GameManager.instance.ShowUpgradeVfx();
+
             GameManager.instance.ChangeGoldCount(-upgradePrice);
             BulletAreaDamage.areaDamage++;
         }

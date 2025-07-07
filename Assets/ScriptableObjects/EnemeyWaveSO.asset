@@ -18,6 +18,6 @@ MonoBehaviour:
   bearCount: 3
   bearSpawnSpeed: 2
   mummySpawnSpeed: 2
-  spawnIntervalTime: 1
+  spawnIntervalTime: 0.5
   bearIncrementRate: 1.2
   mummyIncrementRate: 1

@@ -44,16 +44,17 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         mpbController.SetColor(new Color(0f,255f,221f));
 
-        if (GameManager.instance.showPlaceHolderTowers&&!isFull) 
+        if (GameManager.instance.showPlaceHolderTowers && !isFull)
         {
             placeHolder = GameManager.instance.currentPlaceHolder;
             placeHolder.SetActive(true);
             placeHolder.transform.SetParent(transform);
             GameManager.instance.TowerRangeCircle.GetComponent<SpriteRenderer>().enabled = true;
             GameManager.instance.TowerRangeCircle.transform.SetParent(placeHolder.transform);
-            placeHolder.transform.position = new Vector3(transform.position.x, transform.position.y+ placeHolder.transform.localScale.y, transform.position.z) ;
-           
+            placeHolder.transform.position = new Vector3(transform.position.x, transform.position.y + placeHolder.transform.localScale.y, transform.position.z);
+
         }
+       
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -136,7 +137,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         
         tower.transform.SetParent(transform);
         tower.GetComponent<ITower>().ChangeCanShootBool(true);
-
+        this.tower = tower.GetComponent<ITower>();
         isFull = true;
         placeHolder.SetActive(false);
         Sequence towerSeq = DOTween.Sequence();
@@ -160,7 +161,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             UpgradeTimerImage.fillAmount = passingTime / upgradeTickTime;
             if (passingTime >= upgradeTickTime)
             {
-                tower.UpgradeTower();
+                tower?.UpgradeTower();
                 
                 GameManager.instance.upgradeParticale.transform.SetParent(transform);
                 GameManager.instance.upgradeParticale.transform.localPosition = Vector3.zero;

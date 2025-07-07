@@ -65,7 +65,6 @@ public class Enemy : MonoBehaviour
 
         if (currentHealth<=0&&gameObject!=null)
         {
-            Debug.Log("im ded");
 
             GameManager.instance.PlayEnemyDeathSFX();
             GameManager.instance.ChangeGoldCount(enemyDataSO.goldReward);
