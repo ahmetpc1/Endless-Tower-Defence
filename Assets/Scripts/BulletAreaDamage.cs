@@ -17,7 +17,7 @@ public class BulletAreaDamage : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy")
+        if (other.transform != null&&other.gameObject.tag == "Enemy" )
         {
             other.GetComponent<Enemy>().DecreaseHealth(areaDamage);
         }

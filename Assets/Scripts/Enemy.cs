@@ -15,8 +15,7 @@ public class Enemy : MonoBehaviour
     List<Transform> path;
     int pathCounter = 0;
 
-    int currentHealth;
-
+    public int currentHealth;
     public Action<EnemyDataSO> onEnemyEnterGate;
     
 
@@ -29,7 +28,6 @@ public class Enemy : MonoBehaviour
      currentHealth = enemyDataSO.maxHealth;
      onEnemyEnterGate += GameManager.instance.DecreasePlayerHealth;
      StartCoroutine(StartWalk());
-     
     }
     IEnumerator StartWalk()
     {
@@ -64,13 +62,17 @@ public class Enemy : MonoBehaviour
     public void DecreaseHealth(int damage) 
     {
         currentHealth -= damage;
+
         if (currentHealth<=0&&gameObject!=null)
         {
+            Debug.Log("im ded");
+
+            GameManager.instance.PlayEnemyDeathSFX();
             GameManager.instance.ChangeGoldCount(enemyDataSO.goldReward);
             GameManager.instance.ShowDeathVfx(transform);
             GameManager.instance.score += damage;
-            
             Destroy(gameObject);
+
         }
     }
 

@@ -38,8 +38,10 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag=="Enemy") 
+        if (other.transform != null&&other.gameObject.tag=="Enemy" ) 
         {
+            GameManager.instance.PlayArrowHitSFX();
+
             other.GetComponent<Enemy>().DecreaseHealth(damage); 
             Destroy(gameObject);
         }

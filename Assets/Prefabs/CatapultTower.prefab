@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c252917d3abb6a742a0c1946a8af039d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletObject: {fileID: 8949268884698691594, guid: 8dd986f2d88d10a439bf2b6f5b16515a, type: 3}
+  bulletObject: {fileID: 366460738954115072, guid: c12d7736b4680664bb1af0f9c1bc468c, type: 3}
   upgradePrice: 10
   bulletSpawnPoint: {fileID: 1459476806552807843}
   catapultBody: {fileID: 3848015375091852516}

@@ -66,12 +66,39 @@ public class GameManager : MonoBehaviour
     public int goldCount;
     [SerializeField] int initialGoldCount;
 
+    [Space(10)]
+    [Header("AUDIO")]
+    public AudioClip ArrowHit; 
+    public AudioClip rockHit;
+    public AudioClip enemyDeath;
+
+    AudioSource audioSource1, audioSource2,audioSource3;
+    
     public int score=0;
 
     public ObjectPool enemyDeathVfxPool;
     public ObjectPool AoEVfxPool;
 
+    private void Awake()
+    {
+        audioSource1 = gameObject.AddComponent<AudioSource>();
+        audioSource2 = gameObject.AddComponent<AudioSource>();
+        audioSource3 = gameObject.AddComponent<AudioSource>();
 
+        audioSource2.volume = 0.65f;
+        audioSource1.volume = 1f;
+        audioSource3.volume = 1f;
+
+
+        audioSource1.playOnAwake = false;
+        audioSource2.playOnAwake = false;
+        audioSource3.playOnAwake = false;
+
+
+        audioSource1.clip = ArrowHit;
+        audioSource2.clip = rockHit;
+        audioSource3.clip = enemyDeath;
+    }
     void Start()
     {
         
@@ -90,7 +117,7 @@ public class GameManager : MonoBehaviour
         enemySpawnPoint.y=0.65f;
         endPoint = TileManager.instance.endTile.transform.position;
 
-        SetEnemyWaveDefault(3);//ilk wave kac dusman saldiracak
+        SetEnemyWaveDefault(3,7,5);//ilk wave kac dusman saldiracak
         ChangeAllButtonsAlpha(false);
         ChangeGoldCount(initialGoldCount);
         GameOverMenu.SetActive(false);
@@ -100,6 +127,7 @@ public class GameManager : MonoBehaviour
         CloseUpgradeVfx();
         enemyDeathVfxPool.prefab = EnemyDeathVfx.gameObject;
         healthText.text = $"{currentPlayerHealth} / {maxPlayerHealth}";
+       
     }
     #region Towers
 
@@ -120,9 +148,11 @@ public class GameManager : MonoBehaviour
     {
         if (isGameStart) { 
         showPlaceHolderTowers = !showPlaceHolderTowers;
+            ShowPressFade(archerTowerBtn,CatapultTowerBtn, showPlaceHolderTowers);
         currentPlaceHolder = placeHolderArcherTowerObject;
             currentTowerType = TowerType.archerTower;
-            TowerRangeCircleMove.instance?.SetRangeScale(archerTowerRange);
+            if (showPlaceHolderTowers)
+                TowerRangeCircleMove.instance?.SetRangeScale(archerTowerRange);
         }
     }
     public void CatapultTowerButton()
@@ -130,9 +160,28 @@ public class GameManager : MonoBehaviour
         if (isGameStart)
         {
             showPlaceHolderTowers = !showPlaceHolderTowers;
+            ShowPressFade(CatapultTowerBtn,archerTowerBtn , showPlaceHolderTowers);
+
             currentPlaceHolder = placeHolderCatapultTowerObject;
             currentTowerType = TowerType.catapultTower;
+            if(showPlaceHolderTowers)
             TowerRangeCircleMove.instance?.SetRangeScale(catapultTowerRange);
+        }
+    }
+
+    void ShowPressFade(Button pressedButton,Button normalButton,bool flag) 
+    {
+        if (flag)
+        {
+            changeButtonAlpha(pressedButton, 0.25f);
+            changeButtonAlpha(normalButton, 1f);
+
+        }
+        else 
+        {
+            changeButtonAlpha(normalButton, 1f);
+            changeButtonAlpha(pressedButton, 1f);
+
         }
     }
     #endregion 
@@ -164,8 +213,12 @@ public class GameManager : MonoBehaviour
 
     void UpdateWaveData() //dusmanlarýn sayýsýnýn artacagý , zorlugun artacagý metot
     {
+        int enemyHealthFactor = enemeyWaveSO.bearCount + enemeyWaveSO.mummyCount;
         enemeyWaveSO.bearCount = Mathf.Max((int)(enemeyWaveSO.bearCount * enemeyWaveSO.bearIncrementRate), enemeyWaveSO.bearCount+1);
         enemeyWaveSO.mummyCount = Mathf.Max((int)(enemeyWaveSO.mummyCount * enemeyWaveSO.mummyIncrementRate), enemeyWaveSO.mummyCount + 1);
+        
+        enemeyWaveSO.bearData.maxHealth+= enemyHealthFactor*2/3;
+        enemeyWaveSO.mummyData.maxHealth+= enemyHealthFactor/3;
 
     }
 
@@ -318,13 +371,43 @@ public class GameManager : MonoBehaviour
     public void ChangeGoldCount(int amount)//negatýf veya pozýtýf degerler alabýlýr,tek fonk yazmak ýcýn bu sekýlde yaptýk
     {
         goldCount += amount;
-        goldText.text = goldCount.ToString();
+        goldText.text ="GOLD: " +goldCount.ToString();
     }
     
 
-    public void SetEnemyWaveDefault(int initialEnemyCount) 
+    public void SetEnemyWaveDefault(int initialEnemyCount,int bearHp,int mummyHp) 
     {
     enemeyWaveSO.bearCount = initialEnemyCount;
     enemeyWaveSO.mummyCount = initialEnemyCount;
+        enemeyWaveSO.bearData.maxHealth = bearHp;
+        enemeyWaveSO.mummyData.maxHealth = mummyHp;
+
     }
+
+    #region audio
+    public void PlayArrowHitSFX() 
+    {
+        if (!audioSource1.isPlaying)
+        {
+            audioSource1.Play();
+        }
+        
+    }
+    public void PlayRockHitSFX()
+    {
+        if (!audioSource2.isPlaying)
+        {
+            audioSource2.Play();
+        }
+
+    }
+    public void PlayEnemyDeathSFX()
+    {
+        if (!audioSource3.isPlaying)
+        {
+            audioSource3.Play();
+        }
+
+    }
+    #endregion
 }

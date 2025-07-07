@@ -23,6 +23,7 @@ public class Bullet : MonoBehaviour
     {
         if (other.gameObject.tag == "Ground")
         {
+            GameManager.instance.PlayRockHitSFX();
           Vector3 location = transform.position;
           location.y = 1;
           GameManager.instance.ShowAoEVfx(location);

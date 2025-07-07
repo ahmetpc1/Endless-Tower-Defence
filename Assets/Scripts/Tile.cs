@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -127,12 +128,15 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void CreateTower()
     {
+
+        GameManager.instance.TowerRangeCircle.transform.SetParent(GameManager.instance.transform);
         GameManager.instance.TowerRangeCircle.GetComponent<SpriteRenderer>().enabled = false;
-        
         placeHolder = GameManager.instance.currentPlaceHolder;
         GameObject tower = Instantiate(placeHolder, placeHolder.transform.position, Quaternion.identity);
-        this.tower = tower.GetComponent<ITower>();
+        
         tower.transform.SetParent(transform);
+        tower.GetComponent<ITower>().ChangeCanShootBool(true);
+
         isFull = true;
         placeHolder.SetActive(false);
         Sequence towerSeq = DOTween.Sequence();
@@ -160,7 +164,6 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 
                 GameManager.instance.upgradeParticale.transform.SetParent(transform);
                 GameManager.instance.upgradeParticale.transform.localPosition = Vector3.zero;
-                GameManager.instance.ShowUpgradeVfx();
 
                 isTick = false;
             }
